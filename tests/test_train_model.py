@@ -48,13 +48,11 @@ def prepare_data():
     )
     
     # Split feature and label on the test dataset
-    y_test = test.pop(target_label)
-    y_test = lb.transform(y_test).reshape(-1,)
-
-    test_cat_onehot = encoder.transform(test[cat_features])
-    test.drop(cat_features, axis=1, inplace=True)
-    test = test.to_numpy()
-    X_test = np.hstack([test, test_cat_onehot])
+    # Also, onehot encode features and label binalize label on the test dataset
+    X_test, y_test, _, _ = process_data(
+        test, cat_features, target_label, training=False,
+        encoder=encoder, lb=lb
+    )
 
     return X_train, y_train, X_test, y_test
 

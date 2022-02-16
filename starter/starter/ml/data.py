@@ -42,6 +42,8 @@ def process_data(
     lb : sklearn.preprocessing._label.LabelBinarizer
         Trained LabelBinarizer if training is True, otherwise returns the binarizer
         passed in.
+    X_before: pandas.DataFrame
+        Feature data before processing
     """
 
     if label is not None:
@@ -49,6 +51,8 @@ def process_data(
         X = X.drop([label], axis=1)
     else:
         y = np.array([])
+
+    X_before = X.copy()
 
     X_categorical = X[categorical_features].values
     X_continuous = X.drop(*[categorical_features], axis=1)
@@ -67,4 +71,4 @@ def process_data(
             pass
 
     X = np.concatenate([X_continuous, X_categorical], axis=1)
-    return X, y, encoder, lb
+    return X, y, encoder, lb, X_before

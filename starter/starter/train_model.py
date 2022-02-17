@@ -3,7 +3,6 @@ import joblib
 from sklearn.model_selection import train_test_split
 
 # Add the necessary imports for the starter code.
-import pickle
 import pandas as pd
 from ml import process_data
 from ml import train_model
@@ -12,7 +11,8 @@ from ml import train_model
 data = pd.read_csv("data/census_cleaned.csv")
 
 
-# Optional enhancement, use K-fold cross validation instead of a train-test split.
+# Optional enhancement, use K-fold cross validation
+# instead of a train-test split.
 train, test = train_test_split(data, test_size=0.20)
 
 cat_features = [
@@ -26,7 +26,7 @@ cat_features = [
     "native-country",
 ]
 X_train, y_train, encoder, lb = process_data(
-    train, categorical_features=cat_features, 
+    train, categorical_features=cat_features,
     label="salary", training=True
 )
 
@@ -39,5 +39,5 @@ X_test, y_test, _, _ = process_data(
 
 # Train and save a model.
 model = train_model(X_train, y_train)
-with open("model/model.joblib","wb") as f:
+with open("model/model.joblib", "wb") as f:
     joblib.dump(model, f)

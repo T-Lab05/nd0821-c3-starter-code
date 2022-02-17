@@ -9,8 +9,9 @@ from starter.ml.model import inference
 app = FastAPI()
 
 # Load a seriarized model
-with open("model/model.joblib","rb") as f:
+with open("model/model.joblib", "rb") as f:
     model = joblib.load(f)
+
 
 # Declare Data Model for features
 class FeatureModel(BaseModel):
@@ -35,6 +36,7 @@ class FeatureModel(BaseModel):
 async def welcome():
     return {"message": "Welcome to Salary Prediction API"}
 
+
 # Post method to predict path. Return a prediction.
 @app.post("/predict/")
 async def get_prediction(features: FeatureModel):
@@ -42,7 +44,7 @@ async def get_prediction(features: FeatureModel):
     # Be careful for the order of features so that it matched
     # that of the training dataset.
     features = features.dict()
-    
+
     age = features["age"]
     workclass = features["workclass"]
     fnlgt = features["fnlgt"]
@@ -57,11 +59,12 @@ async def get_prediction(features: FeatureModel):
     capital-loss = features["capital-loss"]
     hours-per-week = features["hours-per-week"]
     native-country = features["native-country"]
-    
-    features = np.array([age, workclass, fnlgt, education,education-num,
+
+    features = np.array([
+        age, workclass, fnlgt, education, education-num,
         marital_status, occupation, relationship, race, sex, capital-gain,
         capicatl-loss, hours-per-week, native-country
     ])
 
-    predicted_class = inference(model, features)    
+    predicted_class = inference(model, features)
     return {"predicted_class": predicted_class}

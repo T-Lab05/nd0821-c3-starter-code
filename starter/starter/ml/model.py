@@ -31,7 +31,8 @@ def train_model(X_train, y_train):
 
 def compute_model_metrics(y, preds):
     """
-    Validates the trained machine learning model using precision, recall, and F1.
+    Validates the trained machine learning model using precision,
+    recall, and F1.
 
     Inputs
     ------
@@ -69,7 +70,7 @@ def inference(model, X):
     return preds
 
 
-def performance_on_wholedata(model, X_test, y_test, output_dir ):
+def performance_on_wholedata(model, X_test, y_test, output_dir):
     """ Check prediction performance on a whole test dataset.
 
     Inputs
@@ -82,7 +83,7 @@ def performance_on_wholedata(model, X_test, y_test, output_dir ):
         Label data used for evaluation.
     output_dir: str
         Path of directory to output a text file.
-    
+
     Returns
     -------
         None
@@ -106,7 +107,7 @@ def performance_on_wholedata(model, X_test, y_test, output_dir ):
         "recall": recall,
         "fbeta": fbeta
     }, name="Metrics")
-    
+
     # Output as CSV file
     ser.to_csv(filepath)
 
@@ -114,7 +115,7 @@ def performance_on_wholedata(model, X_test, y_test, output_dir ):
 
 
 def performance_on_dataslice(
-        model, X_test, y_test, X_test_raw, label_column, slice_columns, 
+        model, X_test, y_test, X_test_raw, label_column, slice_columns,
         output_dir):
     """ Check prediction performance on arbitrary groups.
 
@@ -127,15 +128,15 @@ def performance_on_dataslice(
     y_test: numpy.ndarray
         Label data used for evaluation.
     X_test_raw: pandas.DataFrame
-        Feature data before preprocess, which contains original 
+        Feature data before preprocess, which contains original
         categorical columns.
     label_column: str
         Column name of label on test_data
-    slice_columns : list[str]  
+    slice_columns : list[str]
         Column names on which data is sliced into groups.
     output_dir: str
         Path of directory to output a text file.
-    
+
     Returns
     -------
         None
@@ -154,7 +155,9 @@ def performance_on_dataslice(
     preds = pd.Series(preds, name="pred")
     X = pd.concat([X_test_raw, preds], axis=1)
 
-    df = pd.DataFrame(columns=["columns","value","precision","recall","fbeta"])
+    df = pd.DataFrame(
+        columns=["columns", "value", "precision", "recall", "fbeta"]
+    )
     # Loop slice columns and their values
     for c in slice_columns:
         for value in X[c].unique():
@@ -163,7 +166,9 @@ def performance_on_dataslice(
             y_slice = y_test[is_target]
             preds_slice = preds[is_target]
             # Get metrics on the group
-            precision, recall, fbeta = compute_model_metrics(y_slice, preds_slice)
+            precision, recall, fbeta = compute_model_metrics(
+                y_slice, preds_slice
+            )
             # Insert data into DataFrame
             _ser = pd.Series({
                 "columns": c,
@@ -173,15 +178,15 @@ def performance_on_dataslice(
                 "fbeta": fbeta
             })
             df = pd.concat([df, _ser.to_frame().T], ignore_index=True)
-    
+
     # Output as CSV file
     df.to_csv(filepath)
 
     # Output plots as PNG file
     for c in df["columns"].unique():
-        _tmp = df[df["columns"]==c]
+        _tmp = df[df["columns"] == c]
         fig, ax = plt.subplots()
-        for met in ["precision","recall","fbeta"]:
+        for met in ["precision", "recall", "fbeta"]:
             sns.lineplot(x="value", y=met, data=_tmp, ax=ax, label=met)
         ax.set_title(f"Metrics on the column: {c} ")
         plt.draw()

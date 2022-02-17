@@ -1,11 +1,9 @@
-import pandas as pd
-import numpy as np
-import pytest
 from fastapi.testclient import TestClient
 
 from starter.main import app
 
 client = TestClient(app)
+
 
 def test_welcome():
     """ Test welcome function """
@@ -35,4 +33,3 @@ def test_get_prediction():
     r = client.post("/predict/")
     assert r.status_code == 200, "The status code of response is not 200"
     # assert r.json() == {"predicted_class": 0}, ""
-    

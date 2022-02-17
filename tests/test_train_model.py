@@ -15,6 +15,7 @@ from starter.starter.ml.model import (
     performance_on_dataslice
 )
 
+
 @pytest.fixture()
 def prepare_data():
     """ Fixture to split data """
@@ -34,7 +35,7 @@ def prepare_data():
 
     # Split train and test set
     train, test = train_test_split(
-        data, test_size=0.3, random_state=42, shuffle=True, 
+        data, test_size=0.3, random_state=42, shuffle=True,
         stratify=data[target_label]
     )
     train.reset_index(drop=True, inplace=True)
@@ -45,10 +46,10 @@ def prepare_data():
     X_train, y_train, encoder, lb, X_train_before = process_data(
         train, cat_features, target_label, training=True
     )
-    
+
     # Split feature and label on the test dataset
     # Also, onehot encode features and label binalize label on the test dataset
-    X_test, y_test, _, _, X_test_before  = process_data(
+    X_test, y_test, _, _, X_test_before = process_data(
         test, cat_features, target_label, training=False,
         encoder=encoder, lb=lb
     )
@@ -57,21 +58,21 @@ def prepare_data():
 
 
 def test_train_model(prepare_data):
-    """ 
-    Test if the function returns the subclass of 
+    """
+    Test if the function returns the subclass of
     scikit-learn's Base Estimator.
     """
     X_train, y_train, _, _, _, _ = prepare_data
     model = train_model(X_train, y_train)
     assert isinstance(model, BaseEstimator), (
-        "The output of train_model is not a subclass of " \
+        "The output of train_model is not a subclass of "
         "scikit-learn's BaseEstimator."
     )
 
 
 def test_compute_model_metrics(prepare_data):
-    """ 
-    Test if the function returns proper metircs of precision, recall, fbeta 
+    """
+    Test if the function returns proper metircs of precision, recall, fbeta
     in terms of data types and ranges.
     """
     X_train, y_train, X_test, y_test, _, _ = prepare_data
@@ -99,8 +100,8 @@ def test_compute_model_metrics(prepare_data):
 
 
 def test_inference(prepare_data):
-    """ 
-    Test if the function returns a proper value 
+    """
+    Test if the function returns a proper value
     in terms of data type and array length
     """
     X_train, y_train, X_test, _, _, _ = prepare_data
@@ -110,9 +111,9 @@ def test_inference(prepare_data):
         "Return value is not an instance of numpy.ndarray"
     )
     assert preds.shape[0] == X_test.shape[0], (
-        "Length of returned array doesn't match" \
+        "Length of returned array doesn't match"
         "that of the input feature array"
-    )   
+    )
 
 
 def test_performance_on_wholedata(prepare_data):
@@ -129,12 +130,12 @@ def test_performance_on_wholedata(prepare_data):
 
 def test_performance_on_dataslice(prepare_data):
     """
-    Test the model performance on data slices, especially on 
+    Test the model performance on data slices, especially on
     categorical features.
     """
     X_train, y_train, X_test, y_test, _, X_test_before = prepare_data
     model = train_model(X_train, y_train)
-    
+
     cat_features = [
         "workclass",
         "education",
@@ -147,6 +148,6 @@ def test_performance_on_dataslice(prepare_data):
     ]
     output_dir = "starter/model_performance"
     performance_on_dataslice(
-        model, X_test, y_test, X_test_before, label_column="salary", 
+        model, X_test, y_test, X_test_before, label_column="salary",
         slice_columns=cat_features, output_dir=output_dir
     )

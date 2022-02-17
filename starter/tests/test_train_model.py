@@ -4,10 +4,10 @@ import pytest
 from sklearn.model_selection import train_test_split
 from sklearn.base import BaseEstimator
 
-from starter.starter.ml.data import (
+from starter.ml.data import (
     process_data
 )
-from starter.starter.ml.model import (
+from starter.ml.model import (
     train_model,
     compute_model_metrics,
     inference,

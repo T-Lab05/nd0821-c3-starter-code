@@ -1,6 +1,8 @@
+import json
 from fastapi.testclient import TestClient
 
-from starter.main import app
+from main import app
+
 
 client = TestClient(app)
 
@@ -30,6 +32,7 @@ def test_get_prediction():
         "hours-per-week": 40,
         "native-country": "United-States"
     }
-    r = client.post("/predict/")
+    sample = json.dumps(sample)
+    r = client.post("/predict/", data=sample)
     assert r.status_code == 200, "The status code of response is not 200"
     # assert r.json() == {"predicted_class": 0}, ""

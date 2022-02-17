@@ -1,7 +1,7 @@
 import joblib
 import numpy as np
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from starter.ml.model import inference
 
@@ -15,20 +15,24 @@ with open("model/model.joblib", "rb") as f:
 
 # Declare Data Model for features
 class FeatureModel(BaseModel):
-    age: int
-    workclass: str
-    fnlgt: int
-    education: str
-    education-num: int
-    marital-status: str
-    occupation: str
-    relationship: str
-    race: str
-    sex: str
-    capital-gain: int
-    capital-loss: int
-    hours-per-week: int
-    native-country: str
+    age: int = Field(..., example=25)
+    workclass: str = Field(..., example="Never-married")
+    fnlgt: int = Field(..., example=77516)
+    education: str = Field(..., example="Bachelors")
+    education_num: int = Field(..., alias="education-num", example=13)
+    marital_status: str = Field(...,
+                                alias="marital-status",
+                                example="Divorced")
+    occupation: str = Field(..., example="Adm-clerical")
+    relationship: str = Field(..., example="Husband")
+    race: str = Field(..., example="White")
+    sex: str = Field(..., example="Male")
+    capital_gain: int = Field(..., alias="capital-gain", example=0)
+    capital_loss: int = Field(..., alias="capital-loss", example=0)
+    hours_per_week: int = Field(..., alias="hours-per-week", example=40)
+    native_country: str = Field(...,
+                                alias="native-country",
+                                example="United-States")
 
 
 # Get method to Route. Show welcome a message.
@@ -49,21 +53,21 @@ async def get_prediction(features: FeatureModel):
     workclass = features["workclass"]
     fnlgt = features["fnlgt"]
     education = features["education"]
-    education-num = features["education-num"]
-    marital-status = features["marital-status"]
+    education_num = features["education_num"]
+    marital_status = features["marital_status"]
     occupation = features["occupation"]
     relationship = features["relationship"]
     race = features["race"]
     sex = features["sex"]
-    capital-gain = features["capital-gain"]
-    capital-loss = features["capital-loss"]
-    hours-per-week = features["hours-per-week"]
-    native-country = features["native-country"]
+    capital_gain = features["capital_gain"]
+    capital_loss = features["capital_loss"]
+    hours_per_week = features["hours_per_week"]
+    native_country = features["native_country"]
 
     features = np.array([
-        age, workclass, fnlgt, education, education-num,
-        marital_status, occupation, relationship, race, sex, capital-gain,
-        capicatl-loss, hours-per-week, native-country
+        age, workclass, fnlgt, education, education_num,
+        marital_status, occupation, relationship, race, sex, capital_gain,
+        capital_loss, hours_per_week, native_country
     ])
 
     predicted_class = inference(model, features)

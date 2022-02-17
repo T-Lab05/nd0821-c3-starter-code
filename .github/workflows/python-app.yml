@@ -35,6 +35,7 @@ jobs:
         $CONDA/bin/conda install flake8
 
     - uses: iterative/setup-dvc@v1
+    - name: DVC Pull
       run: |
         dvc pull
 

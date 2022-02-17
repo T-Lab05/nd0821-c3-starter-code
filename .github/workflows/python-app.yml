@@ -25,9 +25,9 @@ jobs:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
     
-    - uses: iterative/setup-dvc@v1
-      run: |
-        dvc pull
+    # - uses: iterative/setup-dvc@v1
+    #   run: |
+    #     dvc pull
     
     - name: Install dependencies
       run: |

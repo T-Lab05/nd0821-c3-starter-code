@@ -1,15 +1,17 @@
 # Script to train machine learning model.
+import numpy as np
 import joblib
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
 
 # Add the necessary imports for the starter code.
 import pandas as pd
-from ml import process_data
-from ml import train_model
+from ml.data import process_data
+from ml.model import train_model
+
 
 # Add code to load in the data.
-data = pd.read_csv("data/census_cleaned.csv")
-
+data = pd.read_csv("starter/data/census_cleaned.csv")
 
 # Optional enhancement, use K-fold cross validation
 # instead of a train-test split.
@@ -25,19 +27,37 @@ cat_features = [
     "sex",
     "native-country",
 ]
-X_train, y_train, encoder, lb = process_data(
+
+# Process the training data. Create Onehot-encoder and Label Encoder.
+X_train, y_train, encoder, lb, _ = process_data(
     train, categorical_features=cat_features,
     label="salary", training=True
 )
 
-# Proces the test data with the process_data function.
-X_test, y_test, _, _ = process_data(
+# Save training dataset and Label Encoder
+pd.DataFrame(X_train).to_csv("starter/data/X_train.csv", index=False)
+pd.DataFrame(y_train).to_csv("starter/data/y_train.csv", index=False)
+with open("starter/model/label_encoder.joblib", "wb") as f:
+    joblib.dump(lb, f)
+
+# Proces the test data with the process_data function
+X_test, y_test, _, _, _ = process_data(
     test, categorical_features=cat_features,
     label="salary", training=False,
     encoder=encoder, lb=lb
 )
 
-# Train and save a model.
+# Save training dataset
+pd.DataFrame(X_test).to_csv("starter/data/X_test.csv", index=False)
+pd.DataFrame(y_test).to_csv("starter/data/y_test.csv", index=False)
+
+# Train a model
 model = train_model(X_train, y_train)
-with open("model/model.joblib", "wb") as f:
-    joblib.dump(model, f)
+
+# Make a pipeline and save it
+pipeline = Pipeline(steps=[
+    ("Onehot_encoder", encoder),
+    ("Random_Forest_classifier", model)
+])
+with open("starter/model/pipeline.joblib", "wb") as f:
+    joblib.dump(pipeline, f)

@@ -11,6 +11,7 @@ from starter.starter.ml.model import (
     train_model,
     compute_model_metrics,
     inference,
+    performance_on_wholedata,
     performance_on_dataslice
 )
 
@@ -114,9 +115,22 @@ def test_inference(prepare_data):
     )   
 
 
+def test_performance_on_wholedata(prepare_data):
+    """
+    Test the model performance on whole dataset
+    """
+    X_train, y_train, X_test, y_test, _, X_test_before = prepare_data
+    model = train_model(X_train, y_train)
+    output_dir = "starter/model_performance"
+    performance_on_wholedata(
+        model, X_test, y_test, output_dir=output_dir
+    )
+
+
 def test_performance_on_dataslice(prepare_data):
     """
-    Test if the function works
+    Test the model performance on data slices, especially on 
+    categorical features.
     """
     X_train, y_train, X_test, y_test, _, X_test_before = prepare_data
     model = train_model(X_train, y_train)
@@ -131,8 +145,7 @@ def test_performance_on_dataslice(prepare_data):
         "sex",
         "native-country",
     ]
-    output_dir = "starter/performance_on_dataslice"
-    #pytest.set_trace()
+    output_dir = "starter/model_performance"
     performance_on_dataslice(
         model, X_test, y_test, X_test_before, label_column="salary", 
         slice_columns=cat_features, output_dir=output_dir

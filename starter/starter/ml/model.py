@@ -1,4 +1,3 @@
-from cProfile import label
 import os
 
 import pandas as pd
@@ -69,6 +68,51 @@ def inference(model, X):
     preds = model.predict(X)
     return preds
 
+
+def performance_on_wholedata(model, X_test, y_test, output_dir ):
+    """ Check prediction performance on a whole test dataset.
+
+    Inputs
+    ------
+    model:
+        Trained machine learning model.
+    X_test: numpy.ndarray
+        Feature data used for prediction.
+    y_test: numpy.ndarray
+        Label data used for evaluation.
+    output_dir: str
+        Path of directory to output a text file.
+    
+    Returns
+    -------
+        None
+        (Write a csv file on disk)
+
+    """
+
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+
+    basefile = "performance_on_wholedata.csv"
+    filepath = os.path.join(output_dir, basefile)
+
+    # Make predictions
+    preds = inference(model, X_test)
+    preds = pd.Series(preds, name="pred")
+    # Get metrics as pandas Series
+    precision, recall, fbeta = compute_model_metrics(y_test, preds)
+    ser = pd.Series({
+        "precision": precision,
+        "recall": recall,
+        "fbeta": fbeta
+    }, name="Metrics")
+    
+    # Output as CSV file
+    ser.to_csv(filepath)
+
+    return None
+
+
 def performance_on_dataslice(
         model, X_test, y_test, X_test_raw, label_column, slice_columns, 
         output_dir):
@@ -95,7 +139,7 @@ def performance_on_dataslice(
     Returns
     -------
         None
-        (Write a text file on disk)
+        (Write a csv and png file on disk)
 
     """
 

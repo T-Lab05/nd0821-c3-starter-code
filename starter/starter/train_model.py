@@ -1,5 +1,5 @@
 # Script to train machine learning model.
-
+import joblib
 from sklearn.model_selection import train_test_split
 
 # Add the necessary imports for the starter code.
@@ -39,5 +39,5 @@ X_test, y_test, _, _ = process_data(
 
 # Train and save a model.
 model = train_model(X_train, y_train)
-with open("model/model.pickle","wb") as f:
-    pickle.dump(model, f)
+with open("model/model.joblib","wb") as f:
+    joblib.dump(model, f)

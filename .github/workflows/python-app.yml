@@ -24,6 +24,8 @@ jobs:
     
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-redion: us-east-1
     
     # - uses: iterative/setup-dvc@v1
     #   run: |

@@ -20,7 +20,7 @@ from starter.ml.model import (
 def prepare_data():
     """ Fixture to split data """
     # Load data
-    data = pd.read_csv("starter/data/census_cleaned.csv")
+    data = pd.read_csv("data/census_cleaned.csv")
     target_label = "salary"
     cat_features = [
         "workclass",
@@ -122,7 +122,7 @@ def test_performance_on_wholedata(prepare_data):
     """
     X_train, y_train, X_test, y_test, _, X_test_before = prepare_data
     model = train_model(X_train, y_train)
-    output_dir = "starter/model_performance"
+    output_dir = "model_performance"
     performance_on_wholedata(
         model, X_test, y_test, output_dir=output_dir
     )
@@ -146,7 +146,7 @@ def test_performance_on_dataslice(prepare_data):
         "sex",
         "native-country",
     ]
-    output_dir = "starter/model_performance"
+    output_dir = "model_performance"
     performance_on_dataslice(
         model, X_test, y_test, X_test_before, label_column="salary",
         slice_columns=cat_features, output_dir=output_dir

@@ -1,9 +1,6 @@
 # Script to train machine learning model.
-import numpy as np
 import joblib
-from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
 
 # Add the necessary imports for the starter code.
 import pandas as pd
@@ -12,7 +9,7 @@ from ml.model import train_model
 
 
 # Add code to load in the data.
-data = pd.read_csv("starter/data/census_cleaned.csv")
+data = pd.read_csv("data/census_cleaned.csv")
 
 # Optional enhancement, use K-fold cross validation
 # instead of a train-test split.
@@ -36,12 +33,12 @@ X_train, y_train, encoder, lb, _ = process_data(
 )
 
 # Save training dataset and transformers
-pd.DataFrame(X_train).to_csv("starter/data/X_train.csv", index=False)
-pd.DataFrame(y_train).to_csv("starter/data/y_train.csv", index=False)
-with open("starter/model/onehot_encoder.joblib", "wb") as f:
+pd.DataFrame(X_train).to_csv("data/X_train.csv", index=False)
+pd.DataFrame(y_train).to_csv("data/y_train.csv", index=False)
+with open("model/onehot_encoder.joblib", "wb") as f:
     joblib.dump(encoder, f)
 
-with open("starter/model/label_encoder.joblib", "wb") as f:
+with open("model/label_encoder.joblib", "wb") as f:
     joblib.dump(lb, f)
 
 # Proces the test data with the process_data function
@@ -52,10 +49,10 @@ X_test, y_test, _, _, _ = process_data(
 )
 
 # Save training dataset
-pd.DataFrame(X_test).to_csv("starter/data/X_test.csv", index=False)
-pd.DataFrame(y_test).to_csv("starter/data/y_test.csv", index=False)
+pd.DataFrame(X_test).to_csv("data/X_test.csv", index=False)
+pd.DataFrame(y_test).to_csv("data/y_test.csv", index=False)
 
 # Train and save a model
 model = train_model(X_train, y_train)
-with open("starter/model/model.joblib", "wb") as f:
+with open("model/model.joblib", "wb") as f:
     joblib.dump(model, f)

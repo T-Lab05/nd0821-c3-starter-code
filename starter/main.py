@@ -10,11 +10,11 @@ from starter.ml.model import inference
 app = FastAPI()
 
 # Load a seriarized model
-with open("starter/model/model.joblib", "rb") as f:
+with open("model/model.joblib", "rb") as f:
     model = joblib.load(f)
 
 # Load a seriarized onehot encoder
-with open("starter/model/onehot_encoder.joblib", "rb") as f:
+with open("model/onehot_encoder.joblib", "rb") as f:
     onehot_encoder = joblib.load(f)
 
 

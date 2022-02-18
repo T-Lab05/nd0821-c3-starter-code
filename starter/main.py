@@ -1,5 +1,6 @@
 import joblib
 import numpy as np
+import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
@@ -9,14 +10,18 @@ from starter.ml.model import inference
 app = FastAPI()
 
 # Load a seriarized model
-with open("model/model.joblib", "rb") as f:
+with open("starter/model/model.joblib", "rb") as f:
     model = joblib.load(f)
+
+# Load a seriarized onehot encoder
+with open("starter/model/onehot_encoder.joblib", "rb") as f:
+    onehot_encoder = joblib.load(f)
 
 
 # Declare Data Model for features
 class FeatureModel(BaseModel):
     age: int = Field(..., example=25)
-    workclass: str = Field(..., example="Never-married")
+    workclass: str = Field(..., example="State-gov")
     fnlgt: int = Field(..., example=77516)
     education: str = Field(..., example="Bachelors")
     education_num: int = Field(..., alias="education-num", example=13)
@@ -44,31 +49,27 @@ async def welcome():
 # Post method to predict path. Return a prediction.
 @app.post("/predict/")
 async def get_prediction(features: FeatureModel):
-    # Prepare features data as numpy.ndarray
-    # Be careful for the order of features so that it matched
-    # that of the training dataset.
+    # Load features from Request body
     features = features.dict()
+    df = pd.DataFrame(features, index=[0])
 
-    age = features["age"]
-    workclass = features["workclass"]
-    fnlgt = features["fnlgt"]
-    education = features["education"]
-    education_num = features["education_num"]
-    marital_status = features["marital_status"]
-    occupation = features["occupation"]
-    relationship = features["relationship"]
-    race = features["race"]
-    sex = features["sex"]
-    capital_gain = features["capital_gain"]
-    capital_loss = features["capital_loss"]
-    hours_per_week = features["hours_per_week"]
-    native_country = features["native_country"]
+    # Onehot encode categorical features
+    cat_features = [
+        "workclass",
+        "education",
+        "marital_status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "native_country"
+    ]
+    df_cat = df[cat_features]
+    ary_cat_onehot = onehot_encoder.transform(df_cat)
+    ary_non_cat = df[df.columns.difference(cat_features)].to_numpy()
+    ary = np.hstack([ary_non_cat, ary_cat_onehot])
 
-    features = np.array([
-        age, workclass, fnlgt, education, education_num,
-        marital_status, occupation, relationship, race, sex, capital_gain,
-        capital_loss, hours_per_week, native_country
-    ])
-
-    predicted_class = inference(model, features)
+    # Make a prediction
+    predicted_class = inference(model, ary)
+    predicted_class = int(predicted_class[0])
     return {"predicted_class": predicted_class}

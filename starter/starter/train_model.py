@@ -1,6 +1,7 @@
 # Script to train machine learning model.
 import numpy as np
 import joblib
+from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 
@@ -34,9 +35,12 @@ X_train, y_train, encoder, lb, _ = process_data(
     label="salary", training=True
 )
 
-# Save training dataset and Label Encoder
+# Save training dataset and transformers
 pd.DataFrame(X_train).to_csv("starter/data/X_train.csv", index=False)
 pd.DataFrame(y_train).to_csv("starter/data/y_train.csv", index=False)
+with open("starter/model/onehot_encoder.joblib", "wb") as f:
+    joblib.dump(encoder, f)
+
 with open("starter/model/label_encoder.joblib", "wb") as f:
     joblib.dump(lb, f)
 
@@ -51,13 +55,7 @@ X_test, y_test, _, _, _ = process_data(
 pd.DataFrame(X_test).to_csv("starter/data/X_test.csv", index=False)
 pd.DataFrame(y_test).to_csv("starter/data/y_test.csv", index=False)
 
-# Train a model
+# Train and save a model
 model = train_model(X_train, y_train)
-
-# Make a pipeline and save it
-pipeline = Pipeline(steps=[
-    ("Onehot_encoder", encoder),
-    ("Random_Forest_classifier", model)
-])
-with open("starter/model/pipeline.joblib", "wb") as f:
-    joblib.dump(pipeline, f)
+with open("starter/model/model.joblib", "wb") as f:
+    joblib.dump(model, f)

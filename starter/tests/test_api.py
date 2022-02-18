@@ -35,4 +35,3 @@ def test_get_prediction():
     sample = json.dumps(sample)
     r = client.post("/predict/", data=sample)
     assert r.status_code == 200, "The status code of response is not 200"
-    # assert r.json() == {"predicted_class": 0}, ""

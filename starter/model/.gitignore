@@ -1,3 +1,4 @@
 
 /label_encoder.joblib
-/pipeline.joblib
+/model.joblib
+/onehot_encoder.joblib

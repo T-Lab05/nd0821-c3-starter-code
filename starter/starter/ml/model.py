@@ -208,11 +208,3 @@ def performance_on_dataslice(
         plt.savefig(filename)
 
     return None
-
-
-# def _write_report(outpath, column, value, precision, recall, fbeta):
-#     with open(outpath, "a") as f:
-#         report = f"{column} - {value} \n\t precision: {precision}" + \
-#                  f"\n\t recall   : {recall}" + \
-#                  f"\n\t fbeta    : {fbeta} \n"
-#         f.writelines(report)

@@ -28,7 +28,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        $CONDA/bin/conda env update --file conda_requirements.txt --name base
+        $CONDA/bin/conda install --file conda_requirements.txt
 
     - uses: iterative/setup-dvc@v1
     - name: DVC Pull

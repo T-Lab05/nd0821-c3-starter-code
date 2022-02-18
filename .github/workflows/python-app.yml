@@ -44,5 +44,4 @@ jobs:
 
     - name: Test with pytest
       run: |
-        cd starter
-        $CONDA/bin/pytest
+        cd starter && $CONDA/bin/pytest

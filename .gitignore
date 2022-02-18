@@ -2,4 +2,3 @@ aws/
 __pycache__
 .pytest_cache
 .vscode/
-model_performance

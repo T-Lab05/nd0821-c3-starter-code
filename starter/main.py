@@ -66,7 +66,7 @@ async def get_prediction(features: FeatureModel):
     ]
     df_cat = df[cat_features]
     ary_cat_onehot = onehot_encoder.transform(df_cat)
-    ary_non_cat = df[df.columns.difference(cat_features)].to_numpy()
+    ary_non_cat = df.drop(*[cat_features], axis=1).to_numpy()
     ary = np.hstack([ary_non_cat, ary_cat_onehot])
 
     # Make a prediction

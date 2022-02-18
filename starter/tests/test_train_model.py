@@ -11,8 +11,6 @@ from starter.ml.model import (
     train_model,
     compute_model_metrics,
     inference,
-    performance_on_wholedata,
-    performance_on_dataslice
 )
 
 
@@ -113,41 +111,4 @@ def test_inference(prepare_data):
     assert preds.shape[0] == X_test.shape[0], (
         "Length of returned array doesn't match"
         "that of the input feature array"
-    )
-
-
-def test_performance_on_wholedata(prepare_data):
-    """
-    Test the model performance on whole dataset
-    """
-    X_train, y_train, X_test, y_test, _, X_test_before = prepare_data
-    model = train_model(X_train, y_train)
-    output_dir = "model_performance"
-    performance_on_wholedata(
-        model, X_test, y_test, output_dir=output_dir
-    )
-
-
-def test_performance_on_dataslice(prepare_data):
-    """
-    Test the model performance on data slices, especially on
-    categorical features.
-    """
-    X_train, y_train, X_test, y_test, _, X_test_before = prepare_data
-    model = train_model(X_train, y_train)
-
-    cat_features = [
-        "workclass",
-        "education",
-        "marital-status",
-        "occupation",
-        "relationship",
-        "race",
-        "sex",
-        "native-country",
-    ]
-    output_dir = "model_performance"
-    performance_on_dataslice(
-        model, X_test, y_test, X_test_before, label_column="salary",
-        slice_columns=cat_features, output_dir=output_dir
     )

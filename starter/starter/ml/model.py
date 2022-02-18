@@ -114,7 +114,7 @@ def performance_on_wholedata(model, X_test, y_test, output_dir):
 
 
 def performance_on_dataslice(
-        model, X_test, y_test, X_test_raw, label_column, slice_columns,
+        model, X_test, y_test, X_test_raw, slice_columns,
         output_dir):
     """ Check prediction performance on arbitrary groups.
 
@@ -129,8 +129,6 @@ def performance_on_dataslice(
     X_test_raw: pandas.DataFrame
         Feature data before preprocess, which contains original
         categorical columns.
-    label_column: str
-        Column name of label on test_data
     slice_columns : list[str]
         Column names on which data is sliced into groups.
     output_dir: str
@@ -143,6 +141,8 @@ def performance_on_dataslice(
 
     """
 
+
+    # Create output directory if not exists
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 
@@ -152,31 +152,41 @@ def performance_on_dataslice(
     # Make predictions
     preds = inference(model, X_test)
     preds = pd.Series(preds, name="pred")
+    X_test_raw = X_test_raw.reset_index() # Reset indexes before concat
     X = pd.concat([X_test_raw, preds], axis=1)
 
     df = pd.DataFrame(
         columns=["columns", "value", "precision", "recall", "fbeta"]
     )
+
+    report_fpath = os.path.join(output_dir, "slice_output.txt")
+
     # Loop slice columns and their values
-    for c in slice_columns:
-        for value in X[c].unique():
-            # Make a sliced group
-            is_target = X[c] == value
-            y_slice = y_test[is_target]
-            preds_slice = preds[is_target]
-            # Get metrics on the group
-            precision, recall, fbeta = compute_model_metrics(
-                y_slice, preds_slice
-            )
-            # Insert data into DataFrame
-            _ser = pd.Series({
-                "columns": c,
-                "value": value,
-                "precision": precision,
-                "recall": recall,
-                "fbeta": fbeta
-            })
-            df = pd.concat([df, _ser.to_frame().T], ignore_index=True)
+    with open(report_fpath, "w+") as f:
+        for c in slice_columns:
+            for value in X[c].unique():
+                # Make a sliced group
+                is_target = X[c] == value
+                y_slice = y_test[is_target]
+                preds_slice = preds[is_target]
+                # Get metrics on the group
+                precision, recall, fbeta = compute_model_metrics(
+                    y_slice, preds_slice
+                )
+                # Insert data into DataFrame
+                ser = pd.Series({
+                    "columns": c,
+                    "value": value,
+                    "precision": precision,
+                    "recall": recall,
+                    "fbeta": fbeta
+                })
+                df = pd.concat([df, ser.to_frame().T], ignore_index=True)
+                # Write to a text file
+                report = f"{c} - {value} \n\t precision: {precision}" + \
+                         f"\n\t recall   : {recall}" + \
+                         f"\n\t fbeta    : {fbeta} \n"
+                f.writelines(report)
 
     # Output as CSV file
     df.to_csv(filepath)
@@ -198,3 +208,11 @@ def performance_on_dataslice(
         plt.savefig(filename)
 
     return None
+
+
+# def _write_report(outpath, column, value, precision, recall, fbeta):
+#     with open(outpath, "a") as f:
+#         report = f"{column} - {value} \n\t precision: {precision}" + \
+#                  f"\n\t recall   : {recall}" + \
+#                  f"\n\t fbeta    : {fbeta} \n"
+#         f.writelines(report)

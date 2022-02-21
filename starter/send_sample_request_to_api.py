@@ -27,6 +27,7 @@ def main():
     sample = json.dumps(sample)
 
     url = "https://udacity-mldevop-part3-api.herokuapp.com/predict"
+    # url = "http://127.0.0.1:5000/predict"
     r = requests.post(url, sample)
     print(f"Response status code: {r.status_code}")
     print(f"Response JSON: {r.json()}")
